@@ -1,0 +1,48 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.set_theme(style="whitegrid")
+
+df = pd.read_csv('Train.csv')
+print(df)
+
+df.head()
+
+
+# df.info()
+df.describe()
+
+df.isnull()
+
+df.isnull().sum()
+
+sns.countplot(x='Reached.on.Time_Y.N',data = df)
+plt.title("Distribution of On-time (i) vs teh Delayed shipments")
+plt.show()
+df.duplicated().sum()
+print(df.duplicated())
+
+print("Mean:\n", df.mean(numeric_only=True))
+
+print("\nMedian:\n", df.median(numeric_only=True))
+
+print("\nMode:\n", df.mode(numeric_only=True))
+
+
+print("\nStandard Deviation:\n", df.std(numeric_only=True))
+
+print("\nVariance:\n", df.var(numeric_only=True))
+import pandas as pd
+
+column1 = "Prior_purchases"
+column2 = "Customer_care_calls"
+
+equal_rows = df[df[column1] == df[column2]]
+
+equal_count = (df[column1] == df[column2]).sum()
+
+print("Number of matching rows:", equal_count)
+print("\nMatching rows:")
+print(equal_rows.head())
