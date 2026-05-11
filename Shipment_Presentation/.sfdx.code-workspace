@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": ".sfdx"
+		},
+		{
+			"path": "data"
+		},
+		{
+			"path": "model"
+		},
+		{
+			"path": "static"
+		},
+		{
+			"path": "streamlit"
+		},
+		{
+			"path": "templates"
+		}
+	]
+}

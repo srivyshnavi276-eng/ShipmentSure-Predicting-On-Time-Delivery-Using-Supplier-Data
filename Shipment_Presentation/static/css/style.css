@@ -1,0 +1,152 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+# ✅ PAGE CONFIG
+st.set_page_config(
+    page_title="ShipmentSure",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# ---------- NEXT LEVEL CSS ----------
+st.markdown("""
+<style>
+.stApp {
+    background: linear-gradient(135deg, #0b1020, #111827, #0f172a);
+    color: white;
+    font-size: 17px;
+}
+
+header {visibility: visible !important;}
+footer {visibility: hidden;}
+
+.sidebar-title {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.hero {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    border-radius: 25px;
+    padding: 35px;
+    margin-bottom: 20px;
+}
+
+.hero-title {
+    font-size: 65px;
+    font-weight: 900;
+}
+
+.hero-sub {
+    font-size: 24px;
+}
+
+.kpi-card {
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+}
+
+.kpi-value {
+    font-size: 34px;
+    font-weight: bold;
+}
+
+.section-card {
+    background: rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 20px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ---------- SIDEBAR ----------
+st.sidebar.markdown('<div class="sidebar-title">Shipment Input</div>', unsafe_allow_html=True)
+
+warehouse_block = st.sidebar.selectbox("Warehouse", ["A","B","C","D","F"])
+mode = st.sidebar.selectbox("Mode", ["Ship","Flight","Road"])
+rating = st.sidebar.slider("Customer Rating", 1,5,3)
+calls = st.sidebar.slider("Customer Calls", 0,10,4)
+discount = st.sidebar.slider("Discount", 0,50,10)
+weight = st.sidebar.slider("Weight", 500,5000,3000)
+importance = st.sidebar.selectbox("Importance", ["low","medium","high"])
+
+btn = st.sidebar.button("Predict 🚀")
+
+# ---------- LOGIC ----------
+def predict():
+    score = 50
+    if rating >= 4: score += 15
+    if calls <= 3: score += 10
+    if discount > 20: score -= 10
+    if weight < 2500: score += 10
+    if mode == "Flight": score += 15
+    if importance == "high": score += 10
+
+    confidence = min(max(score,5),95)
+    return ("On-Time" if confidence >= 60 else "Delayed", confidence)
+
+prediction, confidence = predict()
+
+# ---------- HERO ----------
+st.markdown(f"""
+<div class="hero">
+    <div class="hero-title">ShipmentSure</div>
+    <div class="hero-sub">AI Powered Delivery Prediction</div>
+</div>
+""", unsafe_allow_html=True)
+
+# ---------- KPI ----------
+c1,c2,c3,c4 = st.columns(4)
+
+with c1:
+    st.markdown(f"<div class='kpi-card'>📦<br>Status<br><div class='kpi-value'>{prediction}</div></div>", unsafe_allow_html=True)
+
+with c2:
+    st.markdown(f"<div class='kpi-card'>📊<br>Confidence<br><div class='kpi-value'>{confidence}%</div></div>", unsafe_allow_html=True)
+
+with c3:
+    st.markdown(f"<div class='kpi-card'>🚚<br>Mode<br><div class='kpi-value'>{mode}</div></div>", unsafe_allow_html=True)
+
+with c4:
+    st.markdown(f"<div class='kpi-card'>🏭<br>Warehouse<br><div class='kpi-value'>{warehouse_block}</div></div>", unsafe_allow_html=True)
+
+# ---------- INTERACTIVE GRAPH ----------
+st.markdown("<div class='section-card'><h3>📊 Performance Dashboard</h3>", unsafe_allow_html=True)
+
+df = pd.DataFrame({
+    "Metric": ["Confidence","Rating","Calls","Discount","Weight"],
+    "Value": [confidence, rating*20, calls*10, discount, weight/50]
+})
+
+fig = px.bar(df, x="Metric", y="Value", color="Metric", title="Shipment Metrics")
+st.plotly_chart(fig, use_container_width=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
+
+# ---------- PIE CHART ----------
+st.markdown("<div class='section-card'><h3>📈 Delivery Probability</h3>", unsafe_allow_html=True)
+
+pie = px.pie(
+    names=["On-Time","Delayed"],
+    values=[confidence, 100-confidence],
+    hole=0.5
+)
+
+st.plotly_chart(pie, use_container_width=True)
+st.markdown("</div>", unsafe_allow_html=True)
+
+# ---------- SUMMARY ----------
+st.markdown("<div class='section-card'><h3>📋 Summary</h3>", unsafe_allow_html=True)
+
+st.write(f"Prediction: **{prediction}**")
+st.write(f"Confidence: **{confidence}%**")
+st.progress(confidence/100)
+
+st.markdown("</div>", unsafe_allow_html=True)
+
+if btn:
+    st.success("Prediction Generated Successfully 🚀")

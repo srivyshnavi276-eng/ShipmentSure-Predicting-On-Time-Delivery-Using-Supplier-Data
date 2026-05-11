@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShipmentSure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="page">
+
+        <div class="hero">
+            <div class="mini-title">Logistics AI Console</div>
+            <h1>ShipmentSure</h1>
+            <p class="subtitle">Predicting On-Time Delivery Using Supplier Data</p>
+            <p class="desc">
+                A smart prediction dashboard that uses supplier and shipment features
+                to estimate whether delivery will be on time or delayed.
+            </p>
+            <div class="badges">
+                <span class="badge">Flask Backend</span>
+                <span class="badge">ML Prediction</span>
+                <span class="badge">Supplier Analytics</span>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <h2>Shipment Input</h2>
+                <p class="section-sub">Live prediction</p>
+
+                <form method="POST">
+                    <div class="grid">
+                        <div class="field">
+                            <label>Warehouse Block</label>
+                            <select name="Warehouse_block" required>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="F">F</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>Mode of Shipment</label>
+                            <select name="Mode_of_Shipment" required>
+                                <option value="Ship">Ship</option>
+                                <option value="Flight">Flight</option>
+                                <option value="Road">Road</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>Customer Care Calls</label>
+                            <input type="number" name="Customer_care_calls" required>
+                        </div>
+
+                        <div class="field">
+                            <label>Customer Rating</label>
+                            <input type="number" name="Customer_rating" min="1" max="5" required>
+                        </div>
+
+                        <div class="field">
+                            <label>Cost of the Product</label>
+                            <input type="number" step="0.01" name="Cost_of_the_Product" required>
+                        </div>
+
+                        <div class="field">
+                            <label>Prior Purchases</label>
+                            <input type="number" name="Prior_purchases" required>
+                        </div>
+
+                        <div class="field">
+                            <label>Product Importance</label>
+                            <select name="Product_importance" required>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>Gender</label>
+                            <select name="Gender" required>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label>Discount Offered</label>
+                            <input type="number" step="0.01" name="Discount_offered" required>
+                        </div>
+
+                        <div class="field">
+                            <label>Weight in gms</label>
+                            <input type="number" step="0.01" name="Weight_in_gms" required>
+                        </div>
+                    </div>
+
+                    <button type="submit">Predict Delivery Outcome</button>
+                </form>
+            </div>
+
+            <div class="card result-card">
+                <h2>Prediction Result</h2>
+                <p class="section-sub">Model output</p>
+
+                <div class="result-box">
+                    {% if prediction_text %}
+                        <div class="result-label">Delivery Outcome</div>
+
+                        {% if prediction_text == "On-Time Delivery" %}
+                            <div class="result-value success-text">{{ prediction_text }}</div>
+                        {% elif prediction_text == "Delayed Delivery" %}
+                            <div class="result-value delay-text">{{ prediction_text }}</div>
+                        {% else %}
+                            <div class="result-value error-text">{{ prediction_text }}</div>
+                        {% endif %}
+
+                        {% if confidence_text %}
+                            <div class="confidence">Confidence: {{ confidence_text }}</div>
+                        {% endif %}
+                    {% else %}
+                        <div class="placeholder">Enter shipment details and click Predict.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            ShipmentSure • ML powered delivery prediction dashboard
+        </div>
+    </div>
+</body>
+</html>
